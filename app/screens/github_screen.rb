@@ -8,7 +8,8 @@ class GithubScreen < PM::WebViewScreen
     open_url 'https://github.com'
   end
 
-  def on_load_web_view(web_view)
+  def finish_load(web_view)
+    @last_url = current_url
     inject_js
   end
 
@@ -30,7 +31,7 @@ $(document).on("mousedown", ".line-number, .blob-line-nums span[rel]", function(
   callRPCRequest("shiori-webview://clickLineOfCode");
 });
 JS
-    load_js_src(script)
+    eval_js_src(script)
   end
 
 end

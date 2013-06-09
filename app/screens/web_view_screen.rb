@@ -30,7 +30,7 @@ module ProMotion
       self.view.loadRequest request
     end
 
-    def load_js_src(js_src)
+    def eval_js_src(js_src)
       self.view.stringByEvaluatingJavaScriptFromString(js_src)
     end
 
@@ -38,12 +38,16 @@ module ProMotion
       raise 'override me'
     end
 
-    def on_load_web_view(webView)
+    def finish_load(webView)
       raise 'override me'
     end
 
+    def current_url
+      eval_js_src('document.URL')
+    end
+
     def webViewDidFinishLoad(webView)
-      on_load_web_view(webView)
+      finish_load(webView)
     end
 
     def webView(webView, shouldStartLoadWithRequest:request, navigationType:navigationType)

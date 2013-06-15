@@ -10,6 +10,7 @@ class BookMark < NanoStore::Model
       {
         title: @book_mark.file_name,
         cell_identifier: CELL_IDENTIFIER,
+        key: @book_mark.key,
       }
     end
   end

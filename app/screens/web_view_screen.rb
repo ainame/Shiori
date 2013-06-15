@@ -1,5 +1,5 @@
 module ProMotion
-  class WebViewScreen < UIViewController
+  class WebViewScreen < ViewController
 
     class << self
       def debug_web_bridge=(bool = false)
@@ -21,13 +21,13 @@ module ProMotion
 
     def open_url(url)
       unless self.view.kind_of?(UIWebView)
-        self.view = UIWebView.alloc.init 
+        self.view = UIWebView.new
         self.view.delegate = self
       end
 
       ns_url = NSURL.URLWithString(url)
       request = NSURLRequest.requestWithURL(ns_url)
-      self.view.loadRequest request
+      self.view.loadRequest(request)
     end
 
     def eval_js_src(js_src)
@@ -38,28 +38,28 @@ module ProMotion
       raise 'override me'
     end
 
-    def finish_load(webView)
-      raise 'override me'
-    end
-
     def current_url
       eval_js_src('document.URL')
     end
 
+    def webViewDidStartLoad(webView)
+      web_view_start_load(webView) if self.respond_to?(:web_view_start_load)
+    end
+
     def webViewDidFinishLoad(webView)
-      finish_load(webView)
+      web_view_finish_load(webView) if self.respond_to?(:web_view_finish_load)
     end
 
     def webView(webView, shouldStartLoadWithRequest:request, navigationType:navigationType)
-      return if self.class.bridge_url_scheme.nil?
       url = request.URL
-
+      PM.logger.log("DEBUG", "#{url.scheme}://#{url.host}", :purple)
       if url.scheme == self.class.bridge_url_scheme
-        puts "DEBUG: passed URL - #{url.scheme}://#{url.host} from WebView" if self.class.debug_web_bridge
+        PM.logger.log("DEBUG", "passed URL - #{url.scheme}://#{url.host} from WebView", :blue) if self.class.debug_web_bridge
         on_rpc_call(url)
         return false
       end
 
+      web_view_before_load(webView, request, navigationType) if self.respond_to?(:before_load)
       true
     end
 

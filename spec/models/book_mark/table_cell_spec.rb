@@ -31,6 +31,7 @@ describe BookMark::TableCell do
         b.render.should == {
           title: @book_mark.file_name,
           cell_identifier: BookMark::TableCell::CELL_IDENTIFIER,
+          key: @book_mark.key,
         }
       end
     end

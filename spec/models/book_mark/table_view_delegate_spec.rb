@@ -64,9 +64,9 @@ describe BookMark::TableViewDelegate do
       it "should raise error for access nil data" do 
         index_path = SpecHelper.create_index_path(0,0)
         @subject.delete_cell(index_path)
-        @subject.table_data.should == [{cells: []}]
-        @subject.instance_variable_get(:@is_called_delete_from_db).should == true
-        @subject.instance_variable_get(:@is_called_update_table_data).should == true
+        @subject.table_data.should.equal [{cells: []}]
+        @subject.instance_variable_get(:@is_called_delete_from_db).should.equal true
+        @subject.instance_variable_get(:@is_called_update_table_data).should.equal true
       end
     end
   end

@@ -3,26 +3,18 @@ $:.unshift("/Library/RubyMotion/lib")
 require 'motion/project/template/ios'
 require 'bundler'
 
-Bundler.require
-
-is_test = ARGV.join(' ') =~ /spec/
-if is_test
-  require 'guard/motion'
-  Bundler.require :default, :spec
+if ARGV.join(' ') =~ /spec/
+  Bundler.require(:default, :development)
 else
   Bundler.require
 end
 
-class Exception
-  def backtrace
-    []
-  end
-end
-
+ENV['output'] = 'test_unit'
 Motion::Project::App.setup do |app|
   # Use `rake config' to see complete project settings.
   app.name = 'shiori'
-  app.device_family = :ipad
+  app.device_family  = :ipad
+
   app.pods do
     pod 'NanoStore', '~> 2.6.0'
   end

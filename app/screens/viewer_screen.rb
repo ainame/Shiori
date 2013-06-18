@@ -25,14 +25,9 @@ class ViewerScreen < PM::Screen
     params = BW::JSON.parse(message)
     case method
     when 'clickLineOfCode'
-      p params
       bm = BookMark.new(params)
       bm.save
     end
-  end
-
-  def on_return(params = {})
-    open_url params[:url] if params[:url]
   end
 
   def inject_js

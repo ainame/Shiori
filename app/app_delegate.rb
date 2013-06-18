@@ -1,7 +1,10 @@
 class AppDelegate < PM::Delegate
+  attr_reader :viewer
+
   def on_load(app, options)
     db_path = App.documents_path + '/book_marks.db'
     NanoStore.shared_store = NanoStore.store :file, db_path
-    open_split_screen BookMarkScreen, GithubScreen
+    @viewer = ViewerScreen.new(nav_bar: true)
+    open_split_screen BookMarkScreen, @viewer
   end
 end

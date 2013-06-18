@@ -27,6 +27,7 @@ class BookMarkScreen < PM::TableScreen
 
   def select_book_mark(book_mark)
     self.splitViewController.detail_screen.open_url(book_mark.url)
+    app_delegate.popover_screen.dismissPopoverAnimated(true)
   end
 
   def create_sections

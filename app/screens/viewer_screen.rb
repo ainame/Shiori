@@ -46,12 +46,18 @@ class ViewerScreen < PM::Screen
       CGRectMake(0, sc.applicationFrame.size.height - 44,
         sc.applicationFrame.size.width, 44)
     )
-    button_list = []
-    button_list << UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemFlexibleSpace, target: self, action: nil)
-    button_list << UIBarButtonItem.alloc.initWithTitle("戻る", style: UIBarButtonSystemItemUndo, target: self, action: nil)
-    button_list << UIBarButtonItem.alloc.initWithTitle("進む" , style: UIBarButtonSystemItemRedo, target: self, action: nil)
-    button_list << UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemRefresh, target: self, action: nil)
+    left_arrow = UIImage.imageNamed("iconbeast/arrow-big-01")
+    right_arrow = UIImage.imageNamed("iconbeast/arrow-big-02")
 
+    button_list = []
+    button_list << UIBarButtonItem.alloc.initWithBarButtonSystemItem(
+      UIBarButtonSystemItemFlexibleSpace, target: self, action: nil)
+    button_list << UIBarButtonItem.alloc.initWithImage(left_arrow,
+      style: UIBarButtonItemStylePlain, target: self.web_view, action: :goBack)
+    button_list << UIBarButtonItem.alloc.initWithImage(right_arrow,
+      style: UIBarButtonItemStylePlain, target: self.web_view, action: :goForward)
+    button_list << UIBarButtonItem.alloc.initWithBarButtonSystemItem(
+      UIBarButtonSystemItemRefresh, target: self.web_view, action: :reload)
     self.view.addSubview(@tool_bar)
     self.navigationController.toolbarHidden = false
     self.setToolbarItems(button_list, animated: true)

@@ -46,9 +46,9 @@ class ViewerScreen < PM::Screen
 $($(".star-button")[#{idx}]).click();
 JS
       @viewer_screen.eval_js_src(script)
+      flip_star_state
       @viewer_screen.navigationItem.
         rightBarButtonItem = create_button
-      flip_star_state
     end
 
     def get_current_star_state

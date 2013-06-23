@@ -5,7 +5,6 @@ class ViewerScreen < PM::Screen
   self.debug_web_bridge  = true
   self.bridge_url_scheme = 'shiori-webview'
   STARS_URL = 'https://github.com/stars'
-  TEST_URL = 'https://github.com/ainame/motion-mode/blob/master/motion-mode.el'
 
   title 'Github viewer'
 
@@ -31,6 +30,7 @@ class ViewerScreen < PM::Screen
     inject_js
     reset_star_button
     set_user_link_url_to_master
+    self.web_view.keyboardDisplayRequiresUserAction = true
   end
 
   def on_rpc_call(url)
@@ -86,7 +86,7 @@ function purge_repository_name (string){
 
 $(document).on("mousedown", ".line-number, .blob-line-nums span[rel]", function(e){
   var line = e.currentTarget.innerText;
-  var line_of_code = $("#LC" + line).text();
+  var line_of_code = $("#LC" + line).text().trim();
   var repo_attributes = $("[itemprop=title]");
   var author = repo_attributes[0].innerText;
   var repository_name = repo_attributes[1].innerText;
@@ -141,6 +141,7 @@ JS
 
   def execute_finder
     # emurate "t"'s shortcut
+    self.web_view.keyboardDisplayRequiresUserAction = false
     script = <<JS
 (function(){
   var event = $.Event("keydown");

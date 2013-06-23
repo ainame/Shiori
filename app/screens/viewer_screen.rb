@@ -83,17 +83,19 @@ function purge_repository_name (string){
 
 $(document).on("mousedown", ".line-number, .blob-line-nums span[rel]", function(e){
   var line = e.currentTarget.innerText;
+  var line_of_code = $("#LC" + line).text();
   var repo_attributes = $("[itemprop=title]");
   var author = repo_attributes[0].innerText;
   var repository_name = repo_attributes[1].innerText;
   var file_name_with_repo_name = $(".breadcrumb").text().trim().replace(/ /g, "");
   var file_name = purge_repository_name(file_name_with_repo_name);
   var json = {
-      line: line,
-      file_name: file_name,
-      author: author,
-      repository_name: repository_name,
-      url: document.URL
+    line: line,
+    line_of_code: line_of_code,
+    file_name: file_name,
+    author: author,
+    repository_name: repository_name,
+    url: document.URL
   };
   var encodedParams = encodeURIComponent(JSON.stringify(json));
   var message = "shiori-webview://clickLineOfCode" + encodedParams;

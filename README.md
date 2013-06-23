@@ -4,6 +4,8 @@
   * when you tap line number in source code, Shiori add bookmark to list.
 * execute file finder on iPad.
   * you can't execute file finder in normal environment, but Shiori provide that.
+* some convinience shortcuts
+ * star button and some github menu links
 
 ## ScreenShots
 ![ss1](ss1.png)

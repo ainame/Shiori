@@ -1,5 +1,5 @@
 class BookMarkScreen < PM::TableScreen
-  attr_accessor :table_data
+  attr_accessor :table_data, :user_link_url
   searchable placeholer: "github code"
   refreshable callback: :on_refresh
 
@@ -17,7 +17,7 @@ class BookMarkScreen < PM::TableScreen
   end
 
   def table_data
-    @table_data
+    @table_data ? default_menu.concat(@table_data) : default_menu
   end
 
   def create_sections
@@ -28,6 +28,11 @@ class BookMarkScreen < PM::TableScreen
 
   def select_book_mark(book_mark)
     self.splitViewController.detail_screen.open_url(book_mark.url)
+    app_delegate.popover_screen.dismissPopoverAnimated(true)
+  end
+
+  def select_default_menu(url)
+    self.splitViewController.detail_screen.open_url(url)
     app_delegate.popover_screen.dismissPopoverAnimated(true)
   end
 
@@ -43,4 +48,31 @@ class BookMarkScreen < PM::TableScreen
     BookMark.find_by_key(key).delete
   end
 
+  def default_menu
+    # this method called before on_load, so you should initialize variable
+    @user_link_url ||= "https://github.com"
+    [{
+        title: "Github Menu",
+        cells: [{
+            title: "DashBoard",
+            cell_style: UITableViewCellStyleDefault,
+            cell_identifier: "GithubMenu",
+            action: :select_default_menu,
+            arguments: "https://github.com",
+          },{
+            title: "Star",
+            cell_style: UITableViewCellStyleDefault,
+            cell_identifier: "GithubMenu",
+            action: :select_default_menu,
+            arguments: "https://github.com/stars",
+          },{
+            title: "YourRepositories",
+            cell_style: UITableViewCellStyleDefault,
+            cell_identifier: "GithubMenu",
+            action: :select_default_menu,
+            arguments: user_link_url + "?tab=repositories",
+          }
+        ]
+      }]    
+  end
 end

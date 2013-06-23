@@ -30,6 +30,7 @@ class ViewerScreen < PM::Screen
     self.title = get_repository_name
     inject_js
     reset_star_button
+    set_user_link_url_to_master
   end
 
   def on_rpc_call(url)
@@ -150,6 +151,21 @@ JS
 })();
 JS
     eval_js_src(script)
+  end
+
+  def get_user_link
+    script = <<JS
+(function(){
+  return $("#user-links").find("a").attr("href");
+})();
+JS
+    eval_js_src(script)
+  end
+
+  def set_user_link_url_to_master
+    user_link_url = "https://github.com#{get_user_link}"
+    self.splitViewController.master_screen.user_link_url =
+      user_link_url
   end
 
 end

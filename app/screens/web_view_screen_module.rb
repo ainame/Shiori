@@ -23,16 +23,17 @@ module WebScreenModule
     end
   end
 
-  def open_url(url)
-    unless self.web_view.kind_of?(UIWebView)
-      self.web_view = UIWebView.new.tap do |w|
-        w.frame = UIScreen.mainScreen.bounds
-        w.scalesPageToFit = true;
-        w.delegate = self
-      end
-      self.view.addSubview self.web_view
+  def init_web_view
+    self.web_view = UIWebView.new.tap do |w|
+      w.frame = UIScreen.mainScreen.bounds
+      w.scalesPageToFit = true;
+      w.delegate = self
     end
+    self.view.addSubview self.web_view
+  end
 
+  def open_url(url)
+    init_web_view unless self.web_view.kind_of?(UIWebView)
     ns_url = NSURL.URLWithString(url)
     request = NSURLRequest.requestWithURL(ns_url)
     self.web_view.loadRequest(request)

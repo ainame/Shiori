@@ -28,6 +28,7 @@ module WebScreenModule
       w.frame = UIScreen.mainScreen.bounds
       w.scalesPageToFit = true;
       w.delegate = self
+      w.keyboardDisplayRequiresUserAction = false
     end
     self.view.addSubview self.web_view
   end

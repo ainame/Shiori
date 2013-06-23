@@ -53,6 +53,8 @@ class ViewerScreen < PM::Screen
 
     button_list = []
     button_list << UIBarButtonItem.alloc.initWithBarButtonSystemItem(
+      UIBarButtonSystemItemSearch, target: self, action: :execute_finder)
+    button_list << UIBarButtonItem.alloc.initWithBarButtonSystemItem(
       UIBarButtonSystemItemFlexibleSpace, target: self, action: nil)
     button_list << UIBarButtonItem.alloc.initWithImage(left_arrow,
       style: UIBarButtonItemStylePlain, target: self.web_view, action: :goBack)
@@ -134,6 +136,20 @@ JS
       app_delegate.book_mark_button,
       permittedArrowDirections: UIPopoverArrowDirectionDown,
       animated: true)
+  end
+
+  def execute_finder
+    # emurate "t"'s shortcut
+    script = <<JS
+(function(){
+  var event = $.Event("keydown");
+  event.hotkey = "t";
+  event.target = document.body;
+  $(document.body).trigger(event);    
+  $("input[name=query]")[0].focus();
+})();
+JS
+    eval_js_src(script)
   end
 
 end

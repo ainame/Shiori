@@ -38,7 +38,8 @@ class BookMarkScreen < PM::TableScreen
 
   private
   def delete_cell(index_paths, animated = true)
-    cell = @table_data[index_paths.section][:cells][index_paths.row]
+    # index_paths.section should subtract 1 about default menu
+    cell = @table_data[index_paths.section - 1][:cells][index_paths.row]
     delete_from_db(cell[:key])
     @table_data = create_sections
     update_table_data
@@ -74,5 +75,10 @@ class BookMarkScreen < PM::TableScreen
           }
         ]
       }]    
+  end
+
+  def tableView(tableView, editingStyleForRowAtIndexPath: indexPath)
+    return UITableViewCellEditingStyleNone if indexPath.section == 0
+    UITableViewCellEditingStyleDelete    
   end
 end

@@ -1,4 +1,9 @@
 # Shiori
+## Features
+* manage your bookmarks(it is called shiori in japanese) about line of code at Github.
+  * when you tap line number in source code, Shiori add bookmark to list.
+* execute file finder on iPad.
+  * you can't execute file finder in normal environment, but Shiori provide that.
 
 ## ScreenShots
 ![ss1](ss1.png)

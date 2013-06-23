@@ -14,7 +14,8 @@ class ViewerScreen < PM::Screen
   end
 
   def on_load
-    toggle_star_button
+    init_web_view
+    init_star_button
     set_tool_bar
     open_url to_load_url
   end
@@ -25,9 +26,10 @@ class ViewerScreen < PM::Screen
 
   def web_view_finish_load(web_view)
     App.shared.networkActivityIndicatorVisible = false;
-    self.title = get_repository_name
     App::Persistence['last_url'] = current_url
+    self.title = get_repository_name
     inject_js
+    reset_star_button
   end
 
   def on_rpc_call(url)
@@ -113,39 +115,23 @@ JS
     eval_js_src(script)
   end
 
-  def register_star
-    idx = is_starred ? 0 : 1
-    script = <<"JS"
-$($(".star-button")[#{idx}]).trigger("click");
-JS
-    eval_js_src(script)
-    toggle_star_button
-  end
-
-  def is_starred
-    script = <<JS
-$($(".star-button")[0]).parent().hasClass("on");
-JS
-    result = eval_js_src(script)
-    result == 'true' ? true : false
-  end
-
-  def initialize_star_button
-    @star_button_flag = !is_starred
-    toggle_star_button
-  end
-
-  def toggle_star_button
-    @star_button_flag = !@star_button_flag
-
-    button = UIButton.buttonWithType(UIButtonTypeCustom).tap do |b|
-      image = UIImage.imageNamed(@star_button_flag ? "standard/star" : "standard/alarm")
-      image.userInteractionEnabled = true
-      b.setImage(image, forState: UIControlStateNormal)
-      b.frame = CGRectMake(0,0,25,25)
-    end
+  def init_star_button
+    @star_button = StarButtonView.new(self)
     self.navigationItem.rightBarButtonItem =
-      UIBarButtonItem.alloc.initWithCustomView(button)
+      @star_button.create_button
+  end
+
+  def reset_star_button
+    @star_button.set_current_star_state
+    self.navigationItem.rightBarButtonItem =
+      @star_button.create_button
+  end
+
+  def popup_book_mark
+    app_delegate.popover_screen.presentPopoverFromBarButtonItem(
+      app_delegate.book_mark_button,
+      permittedArrowDirections: UIPopoverArrowDirectionDown,
+      animated: true)
   end
 
 end

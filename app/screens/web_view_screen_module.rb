@@ -1,5 +1,6 @@
 module WebScreenModule
-
+  attr_accessor :web_view
+  
   def self.included(base)
     base.extend(ClassMethods)
   end
@@ -23,18 +24,22 @@ module WebScreenModule
   end
 
   def open_url(url)
-    unless self.view.kind_of?(UIWebView)
-      self.view = UIWebView.new
-      self.view.delegate = self
+    unless self.web_view.kind_of?(UIWebView)
+      self.web_view = UIWebView.new.tap do |w|
+        w.frame = UIScreen.mainScreen.bounds
+        w.scalesPageToFit = true;
+        w.delegate = self
+      end
+      self.view.addSubview self.web_view
     end
 
     ns_url = NSURL.URLWithString(url)
     request = NSURLRequest.requestWithURL(ns_url)
-    self.view.loadRequest(request)
+    self.web_view.loadRequest(request)
   end
 
   def eval_js_src(js_src)
-    self.view.stringByEvaluatingJavaScriptFromString(js_src)
+    self.web_view.stringByEvaluatingJavaScriptFromString(js_src)
   end
 
   def on_rpc_call(url)
@@ -55,7 +60,7 @@ module WebScreenModule
 
   def webView(webView, shouldStartLoadWithRequest:request, navigationType:navigationType)
     url = request.URL
-    PM.logger.log("DEBUG", "#{url.scheme}://#{url.host}", :purple)
+
     if url.scheme == self.class.bridge_url_scheme
       PM.logger.log("DEBUG", "passed URL - #{url.scheme}://#{url.host} from WebView", :blue) if self.class.debug_web_bridge
       on_rpc_call(url)

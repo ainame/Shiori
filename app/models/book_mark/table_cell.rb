@@ -8,11 +8,13 @@ class BookMark < NanoStore::Model
 
     def render
       {
-        :title => @book_mark.file_name,
-        :cell_identifier => CELL_IDENTIFIER,
-        :action => :select_book_mark,
-        :key => @book_mark.key,
-        :arguments => @book_mark,
+        cell_style: UITableViewCellStyleSubtitle,
+        title: @book_mark.file_name,
+        subtitle: "L#{@book_mark.line}",
+        cell_identifier: CELL_IDENTIFIER,
+        action: :select_book_mark,
+        key: @book_mark.key,
+        arguments: @book_mark,
       }
     end
   end

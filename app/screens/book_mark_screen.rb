@@ -1,5 +1,4 @@
 class BookMarkScreen < PM::TableScreen
-  include BookMark::TableViewDelegate
   attr_accessor :table_data
   searchable placeholer: "github code"
   refreshable callback: :on_refresh
@@ -21,8 +20,10 @@ class BookMarkScreen < PM::TableScreen
     @table_data
   end
 
-  def delete_from_db(key)
-    BookMark.find_by_key(key).delete
+  def create_sections
+    book_marks = BookMark.all
+    sections = BookMark::TableSection.create_sections(book_marks)
+    sections.map(&:render)
   end
 
   def select_book_mark(book_mark)
@@ -30,9 +31,16 @@ class BookMarkScreen < PM::TableScreen
     app_delegate.popover_screen.dismissPopoverAnimated(true)
   end
 
-  def create_sections
-    book_marks = BookMark.all
-    sections = BookMark::TableSection.create_sections(book_marks)
-    sections.map(&:render)
+  private
+  def delete_cell(index_paths, animated = true)
+    cell = @table_data[index_paths.section][:cells][index_paths.row]
+    delete_from_db(cell[:key])
+    @table_data = create_sections
+    update_table_data
   end
+
+  def delete_from_db(key)
+    BookMark.find_by_key(key).delete
+  end
+
 end

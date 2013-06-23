@@ -6,11 +6,12 @@ class BookMark < NanoStore::Model
       raise ArgumentError unless book_marks.kind_of?(Array)
       @book_marks = book_marks
       @title = @book_marks.first.repository_name
+      @author = @book_marks.first.author
    end
 
     def render
       {
-        title: @title,
+        title: "#{@author}/#{@title}",
         cells: render_cells,
       }
     end

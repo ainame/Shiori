@@ -122,14 +122,16 @@ JS
 
   def init_star_button
     @star_button = StarButtonView.new(self)
-    self.navigationItem.rightBarButtonItem =
-      @star_button.create_button
+    if button = @star_button.create_button
+      set_nav_bar_button :right, button: button
+    end
   end
 
   def reset_star_button
     @star_button.set_current_star_state
-    self.navigationItem.rightBarButtonItem =
-      @star_button.create_button
+    if button = @star_button.create_button
+      set_nav_bar_button :right, button: button
+    end
   end
 
   def popup_book_mark

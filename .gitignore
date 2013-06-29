@@ -1,2 +1,4 @@
 build
 vendor
+.repl_history
+Guardfile

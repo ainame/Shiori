@@ -16,6 +16,7 @@ Motion::Project::App.setup do |app|
   app.device_family  = :ipad
 
   app.pods do
-    pod 'NanoStore', '~> 2.6.0'
+    pod 'NanoStore'
+    pod 'JASidePanels'
   end
 end

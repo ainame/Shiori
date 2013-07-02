@@ -5,7 +5,14 @@ class BookMarkScreen < PM::TableScreen
 
   title 'Shiori'
 
+  # def will_appear
+  #   self.table_view.frame = CGRectMake(0,0, 200, 460)
+  # end
+
   def on_load
+    PM.logger.warn "on_load view: #{self.view.object_id}"
+    PM.logger.warn "on_load table_view: #{self.table_view.object_id}"
+    self.table_view.frame = CGRectMake(0,0, 200, 460)
     @table_data = create_sections    
     update_table_data
   end
@@ -14,6 +21,8 @@ class BookMarkScreen < PM::TableScreen
     @table_data = create_sections    
     end_refreshing
     update_table_data
+    PM.logger.warn "on_refreash table_view: #{self.table_view.object_id}"
+    self.table_view.frame = CGRectMake(0,0, 200, 460)
   end
 
   def table_data
@@ -27,13 +36,13 @@ class BookMarkScreen < PM::TableScreen
   end
 
   def select_book_mark(book_mark)
-    self.splitViewController.detail_screen.open_url(book_mark.url)
-    app_delegate.popover_screen.dismissPopoverAnimated(true)
+    app_delegate.viewer.open_url(book_mark.url)
+    app_delegate.panels.toggleLeftPanel(nil)
   end
 
   def select_default_menu(url)
-    self.splitViewController.detail_screen.open_url(url)
-    app_delegate.popover_screen.dismissPopoverAnimated(true)
+    app_delegate.viewer.open_url(url)
+    app_delegate.panels.toggleLeftPanel(nil)
   end
 
   def delete_row(index_paths, animated = true)

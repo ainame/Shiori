@@ -64,6 +64,7 @@ class ViewerScreen < PM::WebScreen
     when 'clickLineOfCode'
       bm = BookMark.new(params)
       bm.save
+      app_delegate.panels.leftPanel.on_refresh
     end
   end
 
@@ -115,8 +116,7 @@ class ViewerScreen < PM::WebScreen
 
   def set_user_link_url_to_master
     user_link_url = "https://github.com#{get_user_link}"
-    self.splitViewController.master_screen.user_link_url =
-      user_link_url
+    app_delegate.panels.leftPanel.user_link_url = user_link_url
   end
 
   def load_js_src

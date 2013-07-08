@@ -1,13 +1,7 @@
-GIT
-  remote: git@github.com:clearsightstudio/ProMotion.git
-  revision: 6923447b17b16c4e3ea33050d6f2bf74586c7463
-  branch: version-1.0
-  specs:
-    ProMotion (0.7.6)
-
 GEM
   remote: https://rubygems.org/
   specs:
+    ProMotion (1.0.0)
     activesupport (3.2.13)
       i18n (= 0.6.1)
       multi_json (~> 1.0)
@@ -95,7 +89,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  ProMotion!
+  ProMotion (= 1.0.0)
   bubble-wrap
   growl
   guard-motion

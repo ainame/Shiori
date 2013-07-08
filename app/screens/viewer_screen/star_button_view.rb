@@ -1,4 +1,4 @@
-class ViewerScreen < PM::Screen
+class ViewerScreen < PM::WebScreen
   class StarButtonView 
     STAR_STATUSES = [:on, :off, :other]
 
@@ -45,7 +45,7 @@ class ViewerScreen < PM::Screen
       script = <<"JS"
 $($(".star-button")[#{idx}]).click();
 JS
-      @viewer_screen.eval_js_src(script)
+      @viewer_screen.evaluate(script)
       flip_star_state
       @viewer_screen.navigationItem.
         rightBarButtonItem = create_button
@@ -65,7 +65,7 @@ JS
   }
 })();
 JS
-      @viewer_screen.eval_js_src(script)
+      @viewer_screen.evaluate(script)
     end
 
   end

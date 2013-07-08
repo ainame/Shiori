@@ -1,41 +1,64 @@
 # -*- coding: utf-8 -*-
-class ViewerScreen < PM::Screen
-  include WebScreenModule
+class ViewerScreen < PM::WebScreen
+  class << self
+    def debug_web_bridge=(bool = false)
+      @debug_web_bridge = !!bool
+    end
 
+    def debug_web_bridge
+      @debug_web_bridge
+    end
+
+    def bridge_url_scheme=(url)
+      @bridge_url_scheme = url
+    end
+
+    def bridge_url_scheme
+      @bridge_url_scheme
+    end
+  end
   self.debug_web_bridge  = true
   self.bridge_url_scheme = 'shiori-webview'
   STARS_URL = 'https://github.com/stars'
 
   title 'Github viewer'
 
+  def content
+    to_load_url
+  end
+
   def to_load_url
-    App::Persistence['last_url'] ? App::Persistence['last_url'] : STARS_URL
+    url = App::Persistence['last_url'] ? App::Persistence['last_url'] : STARS_URL
+    NSURL.URLWithString(url)
   end
 
   def on_load
-    init_web_view
     init_star_button
     set_tool_bar
-    open_url to_load_url
   end
 
-  def web_view_before_load(web_view, request, navigation_type)
-    App.shared.networkActivityIndicatorVisible = true;
-  end
-
-  def web_view_finish_load(web_view)
+  def load_finished
     App.shared.networkActivityIndicatorVisible = false;
     App::Persistence['last_url'] = current_url
     self.title = get_repository_name
-    inject_js
+    inject_rpc_js
     reset_star_button
     set_user_link_url_to_master
-    self.web_view.keyboardDisplayRequiresUserAction = true
+    self.webview.keyboardDisplayRequiresUserAction = true
   end
 
-  def on_rpc_call(url)
-    method, message = url.host.match(/(.*)(\{.*\})/).captures
+  def on_request(request, navigation_type)
+    url = request.URL
+    return true unless url.scheme == self.class.bridge_url_scheme
+
+    PM.logger.log("DEBUG", "passed URL - #{url.scheme}://#{url.host} from WebView", :blue) if self.class.debug_web_bridge
+    method, message = request.URL.host.match(/(.*)(\{.*\})/).captures
     params = BW::JSON.parse(message)
+    dispatch_rpc(method, params)
+    false
+  end
+
+  def dispatch_rpc(method, params)
     case method
     when 'clickLineOfCode'
       bm = BookMark.new(params)
@@ -58,17 +81,44 @@ class ViewerScreen < PM::Screen
     button_list << UIBarButtonItem.alloc.initWithBarButtonSystemItem(
       UIBarButtonSystemItemFlexibleSpace, target: self, action: nil)
     button_list << UIBarButtonItem.alloc.initWithImage(left_arrow,
-      style: UIBarButtonItemStylePlain, target: self.web_view, action: :goBack)
+      style: UIBarButtonItemStylePlain, target: self.webview, action: :goBack)
     button_list << UIBarButtonItem.alloc.initWithImage(right_arrow,
-      style: UIBarButtonItemStylePlain, target: self.web_view, action: :goForward)
+      style: UIBarButtonItemStylePlain, target: self.webview, action: :goForward)
     button_list << UIBarButtonItem.alloc.initWithBarButtonSystemItem(
-      UIBarButtonSystemItemRefresh, target: self.web_view, action: :reload)
+      UIBarButtonSystemItemRefresh, target: self.webview, action: :reload)
     self.view.addSubview(@tool_bar)
     self.navigationController.toolbarHidden = false
     self.setToolbarItems(button_list, animated: true)
   end
 
-  def inject_js
+  def init_star_button
+    @star_button = StarButtonView.new(self)
+    if button = @star_button.create_button
+      set_nav_bar_button :right, button: button
+    end
+  end
+
+  def reset_star_button
+    @star_button.set_current_star_state
+    if button = @star_button.create_button
+      set_nav_bar_button :right, button: button
+    end
+  end
+
+  def popup_book_mark
+    app_delegate.popover_screen.presentPopoverFromBarButtonItem(
+      app_delegate.book_mark_button,
+      permittedArrowDirections: UIPopoverArrowDirectionDown,
+      animated: true)
+  end
+
+  def set_user_link_url_to_master
+    user_link_url = "https://github.com#{get_user_link}"
+    self.splitViewController.master_screen.user_link_url =
+      user_link_url
+  end
+
+  def inject_rpc_js
     script = <<JS
 function callRPCRequest(url){
   console.log(url)
@@ -105,7 +155,7 @@ $(document).on("mousedown", ".line-number, .blob-line-nums span[rel]", function(
   callRPCRequest(message);
 });
 JS
-    eval_js_src(script)
+    evaluate(script)
   end
 
   def get_repository_name
@@ -117,33 +167,12 @@ JS
   return author + "/" + repository_name;
 })();
 JS
-    eval_js_src(script)
-  end
-
-  def init_star_button
-    @star_button = StarButtonView.new(self)
-    if button = @star_button.create_button
-      set_nav_bar_button :right, button: button
-    end
-  end
-
-  def reset_star_button
-    @star_button.set_current_star_state
-    if button = @star_button.create_button
-      set_nav_bar_button :right, button: button
-    end
-  end
-
-  def popup_book_mark
-    app_delegate.popover_screen.presentPopoverFromBarButtonItem(
-      app_delegate.book_mark_button,
-      permittedArrowDirections: UIPopoverArrowDirectionDown,
-      animated: true)
+    evaluate(script)
   end
 
   def execute_finder
     # emurate "t"'s shortcut
-    self.web_view.keyboardDisplayRequiresUserAction = false
+    self.webview.keyboardDisplayRequiresUserAction = false
     script = <<JS
 (function(){
   var event = $.Event("keydown");
@@ -153,7 +182,7 @@ JS
   $("input[name=query]")[0].focus();
 })();
 JS
-    eval_js_src(script)
+    evaluate(script)
   end
 
   def get_user_link
@@ -162,13 +191,6 @@ JS
   return $("#user-links").find("a").attr("href");
 })();
 JS
-    eval_js_src(script)
+    evaluate(script)
   end
-
-  def set_user_link_url_to_master
-    user_link_url = "https://github.com#{get_user_link}"
-    self.splitViewController.master_screen.user_link_url =
-      user_link_url
-  end
-
 end

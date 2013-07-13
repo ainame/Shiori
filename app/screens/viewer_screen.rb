@@ -35,13 +35,14 @@ class ViewerScreen < PM::WebScreen
   def on_load
     init_star_button
     set_tool_bar
+    load_js_src
   end
 
   def load_finished
     App.shared.networkActivityIndicatorVisible = false;
     App::Persistence['last_url'] = current_url
+    inject_js_src
     self.title = get_repository_name
-    inject_rpc_js
     reset_star_button
     set_user_link_url_to_master
     self.webview.keyboardDisplayRequiresUserAction = true
@@ -118,79 +119,27 @@ class ViewerScreen < PM::WebScreen
       user_link_url
   end
 
-  def inject_rpc_js
-    script = <<JS
-function callRPCRequest(url){
-  console.log(url)
-  location.href = url;
-}
+  def load_js_src
+    path = File.join(App.resources_path, 'application.js')
+    @js_src = NSString.stringWithContentsOfFile(path, encoding: NSUTF8StringEncoding, error: nil)
+  end
 
-function purge_repository_name (string){
-  for (var i = 0; i < string.length; i++) {
-    if (string[i] === "/"){
-      break;
-    }
-  }
-  return string.slice(i+1, string.length);
-}
-
-$(document).on("mousedown", ".line-number, .blob-line-nums span[rel]", function(e){
-  var line = e.currentTarget.innerText;
-  var line_of_code = $("#LC" + line).text().trim();
-  var repo_attributes = $("[itemprop=title]");
-  var author = repo_attributes[0].innerText;
-  var repository_name = repo_attributes[1].innerText;
-  var file_name_with_repo_name = $(".breadcrumb").text().trim().replace(/ /g, "");
-  var file_name = purge_repository_name(file_name_with_repo_name);
-  var json = {
-    line: line,
-    line_of_code: line_of_code,
-    file_name: file_name,
-    author: author,
-    repository_name: repository_name,
-    url: document.URL
-  };
-  var encodedParams = encodeURIComponent(JSON.stringify(json));
-  var message = "shiori-webview://clickLineOfCode" + encodedParams;
-  callRPCRequest(message);
-});
-JS
-    evaluate(script)
+  def inject_js_src
+    evaluate(@js_src)
+    evaluate("Shiori.attachClickLineOfCodeEvent();")
   end
 
   def get_repository_name
-    script = <<JS
-(function(){
-  var repo_attributes = $("[itemprop=title]");
-  var author = repo_attributes[0].innerText;
-  var repository_name = repo_attributes[1].innerText;
-  return author + "/" + repository_name;
-})();
-JS
-    evaluate(script)
+    evaluate("Shiori.getRepositoryName();")
   end
 
   def execute_finder
     # emurate "t"'s shortcut
     self.webview.keyboardDisplayRequiresUserAction = false
-    script = <<JS
-(function(){
-  var event = $.Event("keydown");
-  event.hotkey = "t";
-  event.target = document.body;
-  $(document.body).trigger(event);    
-  $("input[name=query]")[0].focus();
-})();
-JS
-    evaluate(script)
+    evaluate("Shiori.executeFinder();")
   end
 
   def get_user_link
-    script = <<JS
-(function(){
-  return $("#user-links").find("a").attr("href");
-})();
-JS
-    evaluate(script)
+    evaluate("Shiori.getUserLinks();")
   end
 end

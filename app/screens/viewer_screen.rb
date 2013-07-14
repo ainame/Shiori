@@ -1,24 +1,6 @@
 # -*- coding: utf-8 -*-
 class ViewerScreen < PM::WebScreen
-  class << self
-    def debug_web_bridge=(bool = false)
-      @debug_web_bridge = !!bool
-    end
-
-    def debug_web_bridge
-      @debug_web_bridge
-    end
-
-    def bridge_url_scheme=(url)
-      @bridge_url_scheme = url
-    end
-
-    def bridge_url_scheme
-      @bridge_url_scheme
-    end
-  end
-  self.debug_web_bridge  = true
-  self.bridge_url_scheme = 'shiori-webview'
+  BRIDGE_URL_SCHEME = 'shiori-webview'
   STARS_URL = 'https://github.com/stars'
 
   title 'Github viewer'
@@ -72,7 +54,7 @@ class ViewerScreen < PM::WebScreen
       return true 
     end
 
-    PM.logger.log("DEBUG", "passed URL - #{url.scheme}://#{url.host} from WebView", :blue) if self.class.debug_web_bridge
+    PM.logger.log("DEBUG", "passed URL - #{url.scheme}://#{url.host} from WebView", :blue) if RUBYMOTION_ENV == "development"
     method, message = request.URL.host.match(/(.*?)(\{.*\})/).captures
     params = BW::JSON.parse(message)
     dispatch_rpc(method, params)

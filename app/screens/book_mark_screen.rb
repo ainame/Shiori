@@ -1,28 +1,22 @@
 class BookMarkScreen < PM::TableScreen
   attr_accessor :table_data, :user_link_url
   searchable placeholer: "github code"
-  refreshable callback: :on_refresh
 
   title 'Shiori'
 
-  # def will_appear
-  #   self.table_view.frame = CGRectMake(0,0, 200, 460)
-  # end
-
-  def on_load
-    PM.logger.warn "on_load view: #{self.view.object_id}"
-    PM.logger.warn "on_load table_view: #{self.table_view.object_id}"
-    self.table_view.frame = CGRectMake(0,0, 200, 460)
-    @table_data = create_sections    
-    update_table_data
+  # hack to resizing UITableView
+  def set_up_table_view
+    _table_view = self.create_table_view_from_data(self.table_data)
+    adjusted_frame = self.view.bounds
+    adjusted_frame.size.width = app_delegate.panels.leftVisibleWidth
+    _table_view.frame = adjusted_frame
+    self.view = UIView.new
+    self.view.addSubview(_table_view)
   end
 
-  def on_refresh
+  def on_load
     @table_data = create_sections    
-    end_refreshing
     update_table_data
-    PM.logger.warn "on_refreash table_view: #{self.table_view.object_id}"
-    self.table_view.frame = CGRectMake(0,0, 200, 460)
   end
 
   def table_data

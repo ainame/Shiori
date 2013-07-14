@@ -1,6 +1,7 @@
 class BookMark < NanoStore::Model
   class TableSection
     class ArgumentError < StandardError; end
+    attr_reader :author, :title, :book_marks
 
     def initialize(book_marks)
       raise ArgumentError unless book_marks.kind_of?(Array)
@@ -28,6 +29,8 @@ class BookMark < NanoStore::Model
           b.repository_name
         end.map do |title, book_marks_of_section|
           new(book_marks_of_section)
+        end.sort do |a,b|
+          a.author <=> b.author
         end
       end
     end

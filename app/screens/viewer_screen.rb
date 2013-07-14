@@ -73,7 +73,7 @@ class ViewerScreen < PM::WebScreen
     end
 
     PM.logger.log("DEBUG", "passed URL - #{url.scheme}://#{url.host} from WebView", :blue) if self.class.debug_web_bridge
-    method, message = request.URL.host.match(/(.*)(\{.*\})/).captures
+    method, message = request.URL.host.match(/(.*?)(\{.*\})/).captures
     params = BW::JSON.parse(message)
     dispatch_rpc(method, params)
     false
@@ -84,7 +84,6 @@ class ViewerScreen < PM::WebScreen
     when 'clickLineOfCode'
       bm = BookMark.new(params)
       bm.save
-      app_delegate.panels.leftPanel.on_refresh
     end
   end
 

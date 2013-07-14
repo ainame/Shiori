@@ -17,6 +17,7 @@ class ViewerScreen < PM::WebScreen
   def on_load
     init_star_button
     set_tool_bar
+    set_bookmark_button
     load_js_src
   end
 
@@ -94,6 +95,20 @@ class ViewerScreen < PM::WebScreen
     self.setToolbarItems(button_list, animated: true)
   end
 
+  def toggle_left_panel
+    app_delegate.panels.toggleLeftPanel(nil)
+  end
+
+  def set_bookmark_button
+    custom_view = UIButton.buttonWithType(UIButtonTypeCustom).tap do |b|
+      b.setImage(UIImage.imageNamed("iconbeast/bookmark"), forState: UIControlStateNormal)
+      b.frame = CGRectMake(0,0,25,25)
+      b.addTarget(self, action: :toggle_left_panel, forControlEvents: UIControlEventTouchUpInside)
+    end
+    button = UIBarButtonItem.alloc.initWithCustomView(custom_view)
+    self.navigationItem.leftBarButtonItem = button
+  end
+
   def init_star_button
     @star_button = StarButtonView.new(self)
     if button = @star_button.create_button
@@ -106,13 +121,6 @@ class ViewerScreen < PM::WebScreen
     if button = @star_button.create_button
       set_nav_bar_button :right, button: button
     end
-  end
-
-  def popup_book_mark
-    app_delegate.popover_screen.presentPopoverFromBarButtonItem(
-      app_delegate.book_mark_button,
-      permittedArrowDirections: UIPopoverArrowDirectionDown,
-      animated: true)
   end
 
   def set_user_link_url_to_master

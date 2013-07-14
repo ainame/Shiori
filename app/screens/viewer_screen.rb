@@ -38,9 +38,19 @@ class ViewerScreen < PM::WebScreen
     load_js_src
   end
 
+  def start_indicator
+    App.shared.networkActivityIndicatorVisible = true
+    @indicator = LoadingIndicatorScreen.new(self)
+    @indicator.start
+  end
+
+  def stop_indicator
+    App.shared.networkActivityIndicatorVisible = false
+    @indicator.stop if @indicator
+  end
+
   def load_finished
-    App.shared.networkActivityIndicatorVisible = false;
-    App::Persistence['last_url'] = current_url
+    stop_indicator
     inject_js_src
     self.title = get_repository_name
     reset_star_button
@@ -48,9 +58,19 @@ class ViewerScreen < PM::WebScreen
     self.webview.keyboardDisplayRequiresUserAction = true
   end
 
+  def id_anchor?(from, to)
+    from_url = NSURL.URLWithString(from)
+    to_url = NSURL.URLWithString(to)
+    from_url.scheme == to_url.scheme && from_url.path == to_url.path
+  end
+
   def on_request(request, navigation_type)
     url = request.URL
-    return true unless url.scheme == self.class.bridge_url_scheme
+    unless url.scheme == BRIDGE_URL_SCHEME
+      start_indicator unless id_anchor?(App::Persistence['last_url'], url.absoluteString)
+      App::Persistence['last_url'] = url.absoluteString
+      return true 
+    end
 
     PM.logger.log("DEBUG", "passed URL - #{url.scheme}://#{url.host} from WebView", :blue) if self.class.debug_web_bridge
     method, message = request.URL.host.match(/(.*)(\{.*\})/).captures

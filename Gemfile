@@ -5,7 +5,6 @@ gem 'ProMotion'#, :git => "git@github.com:clearsightstudio/ProMotion.git"
 gem 'bubble-wrap'
 gem 'nano-store'
 gem 'motion-cocoapods'
-gem 'formotion'
 gem 'motion-pixate'
 
 group :development do

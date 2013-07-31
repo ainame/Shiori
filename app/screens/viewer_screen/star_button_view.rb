@@ -3,8 +3,8 @@ class ViewerScreen < PM::WebScreen
     STAR_STATUSES = [:on, :off, :other]
 
     def initialize(viewer_screen)
-      @viewer_screen  = WeakRef.new(viewer_screen)
-      set_current_star_state
+      @viewer_screen = viewer_screen
+      set_current_star_state 
       create_button
     end
 

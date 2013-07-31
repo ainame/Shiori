@@ -10,6 +10,7 @@ class LoadingIndicatorScreen
   end
 
   def stop
+    return unless @indicator.respond_to?(:stopAnimating)
     @indicator.stopAnimating
     @indicator.removeFromSuperview
     @view.removeFromSuperview

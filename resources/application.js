@@ -46,7 +46,9 @@
     event.hotkey = "t";
     event.target = document.body;
     $(document.body).trigger(event);
-    $("input[name=query]")[0].focus();
+    var queryForm = $("input[name=query]");
+    queryForm.attr("autocapitalize","off");
+    queryForm[0].focus();
   };
 
   Shiori.getUserLinks = function(){

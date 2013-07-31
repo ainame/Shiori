@@ -1,10 +1,12 @@
 source 'https://rubygems.org'
 
 gem 'bubble-wrap'
-gem 'ProMotion', '= 1.0.0'#:git => "git@github.com:clearsightstudio/ProMotion.git", :branch => 'version-1.0'
+gem 'ProMotion'#, :git => "git@github.com:clearsightstudio/ProMotion.git"
 gem 'bubble-wrap'
 gem 'nano-store'
 gem 'motion-cocoapods'
+gem 'formotion'
+gem 'motion-pixate'
 
 group :development do
   gem 'guard-motion'

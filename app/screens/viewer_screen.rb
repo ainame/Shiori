@@ -15,7 +15,6 @@ class ViewerScreen < PM::WebScreen
   end
 
   def on_load
-    init_star_button
     set_tool_bar
     set_bookmark_button
     load_js_src
@@ -32,9 +31,14 @@ class ViewerScreen < PM::WebScreen
     @indicator.stop if @indicator
   end
 
-  def load_finished
-    stop_indicator
+  def load_started
     inject_js_src
+  end
+
+  def load_finished
+    inject_js_src
+    set_star_button
+    stop_indicator
     self.title = get_repository_name
     reset_star_button
     set_user_link_url_to_master
@@ -50,7 +54,7 @@ class ViewerScreen < PM::WebScreen
   def on_request(request, navigation_type)
     url = request.URL
     unless url.scheme == BRIDGE_URL_SCHEME
-      start_indicator unless id_anchor?(App::Persistence['last_url'], url.absoluteString)
+      #start_indicator unless id_anchor?(App::Persistence['last_url'], url.absoluteString)
       App::Persistence['last_url'] = url.absoluteString
       return true 
     end
@@ -59,7 +63,8 @@ class ViewerScreen < PM::WebScreen
     method, message = request.URL.host.match(/(.*?)(\{.*\})/).captures
     params = BW::JSON.parse(message)
     dispatch_rpc(method, params)
-    false
+    #stop_indicator
+    return false
   end
 
   def dispatch_rpc(method, params)
@@ -67,6 +72,7 @@ class ViewerScreen < PM::WebScreen
     when 'clickLineOfCode'
       bm = BookMark.new(params)
       bm.save
+      app_delegate.book_mark.update_table_data
     end
   end
 
@@ -82,6 +88,8 @@ class ViewerScreen < PM::WebScreen
     button_list = []
     button_list << UIBarButtonItem.alloc.initWithBarButtonSystemItem(
       UIBarButtonSystemItemSearch, target: self, action: :execute_finder)
+    button_list << UIBarButtonItem.alloc.initWithBarButtonSystemItem(
+      UIBarButtonSystemItemAction, target: self, action: :execute_finder)
     button_list << UIBarButtonItem.alloc.initWithBarButtonSystemItem(
       UIBarButtonSystemItemFlexibleSpace, target: self, action: nil)
     button_list << UIBarButtonItem.alloc.initWithImage(left_arrow,
@@ -109,7 +117,8 @@ class ViewerScreen < PM::WebScreen
     self.navigationItem.leftBarButtonItem = button
   end
 
-  def init_star_button
+  def set_star_button
+    self.evaluate('')
     @star_button = StarButtonView.new(self)
     if button = @star_button.create_button
       set_nav_bar_button :right, button: button
@@ -146,6 +155,7 @@ class ViewerScreen < PM::WebScreen
     # emurate "t"'s shortcut
     self.webview.keyboardDisplayRequiresUserAction = false
     evaluate("Shiori.executeFinder();")
+    self.webview.keyboardDisplayRequiresUserAction = true
   end
 
   def get_user_link

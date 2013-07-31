@@ -1,4 +1,6 @@
 class BookMarkScreen < PM::TableScreen
+  include BookMarkScreen::StaticMenu
+
   attr_accessor :table_data, :user_link_url
   searchable placeholer: "github code"
 
@@ -15,13 +17,17 @@ class BookMarkScreen < PM::TableScreen
     self.view.addSubview(_table_view)
   end
 
+  def table_data
+    @table_data ||= []
+  end
+
   def on_load
-    @table_data = create_sections    
+    @table_data = create_book_marks_table_data
     update_table_data
   end
 
-  def table_data
-    @table_data ? default_menu.concat(@table_data) : default_menu
+  def create_book_marks_table_data
+    default_menu + (create_sections || []) + setting_menu    
   end
 
   def create_sections
@@ -40,43 +46,19 @@ class BookMarkScreen < PM::TableScreen
     app_delegate.panels.toggleLeftPanel(nil)
   end
 
+  def open_setting_screen
+    app_delegate.panels.centerPanel = SettingScreen.new(nav_bar: true).navigation_controller
+    app_delegate.panels.toggleLeftPanel(nil)
+  end
+  
   def delete_row(index_paths, animated = true)
-    # index_paths.section should subtract 1 about default menu
-    cell = @table_data[index_paths.section - 1][:cells][index_paths.row]
+    cell = @table_data[index_paths.section][:cells][index_paths.row]
     delete_from_db(cell[:key])
-    @table_data = create_sections
+    @table_data = create_book_marks_table_data
     update_table_data
   end
 
   def delete_from_db(key)
     BookMark.find_by_key(key).delete
-  end
-
-  def default_menu
-    # this method called before on_load, so you should initialize variable
-    @user_link_url ||= "https://github.com"
-    [{
-        title: "Github Menu",
-        cells: [{
-            title: "DashBoard",
-            cell_style: UITableViewCellStyleDefault,
-            cell_identifier: "GithubMenu",
-            action: :select_default_menu,
-            arguments: "https://github.com",
-          },{
-            title: "Star",
-            cell_style: UITableViewCellStyleDefault,
-            cell_identifier: "GithubMenu",
-            action: :select_default_menu,
-            arguments: "https://github.com/stars",
-          },{
-            title: "YourRepositories",
-            cell_style: UITableViewCellStyleDefault,
-            cell_identifier: "GithubMenu",
-            action: :select_default_menu,
-            arguments: user_link_url + "?tab=repositories",
-          }
-        ]
-      }]    
   end
 end

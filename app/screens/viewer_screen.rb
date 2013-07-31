@@ -70,8 +70,7 @@ class ViewerScreen < PM::WebScreen
   def dispatch_rpc(method, params)
     case method
     when 'clickLineOfCode'
-      bm = BookMark.new(params)
-      bm.save
+      BookMark.new(params).save
       app_delegate.book_mark.update_table_data
     end
   end

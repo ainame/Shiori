@@ -28,7 +28,7 @@ class SettingScreen < PM::Screen
       center: CGPointMake(center_x - 125, 250),
       style_id: 'setting-screen-delete-button-label'
     }
-    @label.text = '・BookMark'
+    @label.text = 'BookMark'
     @label.sizeToFit
     @button = add UIButton.buttonWithType(UIButtonTypeRoundedRect), {
       center: CGPointMake(center_x - 125, 300),
@@ -38,6 +38,8 @@ class SettingScreen < PM::Screen
     @button.setTitle('Delete All Bookmarks', forState: UIControlStateNormal)
     @button.setTitleColor(UIColor.whiteColor, forState: UIControlStateNormal)
     @button.sizeToFit
+    @button.addTarget(self, action: :alert,
+      forControlEvents: UIControlEventTouchUpInside)
   end
 
   def alert

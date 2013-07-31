@@ -88,7 +88,7 @@ class ViewerScreen < PM::WebScreen
     button_list << UIBarButtonItem.alloc.initWithBarButtonSystemItem(
       UIBarButtonSystemItemSearch, target: self, action: :execute_finder)
     button_list << UIBarButtonItem.alloc.initWithBarButtonSystemItem(
-      UIBarButtonSystemItemAction, target: self, action: :execute_finder)
+      UIBarButtonSystemItemAction, target: self, action: :execute_ui_activity)
     button_list << UIBarButtonItem.alloc.initWithBarButtonSystemItem(
       UIBarButtonSystemItemFlexibleSpace, target: self, action: nil)
     button_list << UIBarButtonItem.alloc.initWithImage(left_arrow,
@@ -155,6 +155,15 @@ class ViewerScreen < PM::WebScreen
     self.webview.keyboardDisplayRequiresUserAction = false
     evaluate("Shiori.executeFinder();")
     self.webview.keyboardDisplayRequiresUserAction = true
+  end
+
+  def execute_ui_activity
+    format = "%s を読んでます！%s #github_shiori"
+    url   = NSURL.URLWithString(current_url)
+    text = format % [get_repository_name, current_url]
+    activityItems = [text]
+    activityView = UIActivityViewController.alloc.initWithActivityItems(activityItems, applicationActivities: [])
+    self.presentViewController(activityView, animated: true, completion:nil)
   end
 
   def get_user_link

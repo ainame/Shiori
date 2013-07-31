@@ -6,6 +6,7 @@ class BookMarkScreen < PM::TableScreen
 
   # hack to resizing UITableView
   def set_up_table_view
+    self.table_view
     _table_view = self.create_table_view_from_data(self.table_data)
     adjusted_frame = self.view.bounds
     adjusted_frame.size.width = app_delegate.panels.leftVisibleWidth

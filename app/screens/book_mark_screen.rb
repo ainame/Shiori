@@ -18,16 +18,15 @@ class BookMarkScreen < PM::TableScreen
   end
 
   def table_data
-    @table_data ||= []
+    @table_data = create_book_marks_table_data
   end
 
   def on_load
-    @table_data = create_book_marks_table_data
     update_table_data
   end
 
   def create_book_marks_table_data
-    default_menu + (create_sections || []) + setting_menu    
+    default_menu + (create_sections || []) + setting_menu
   end
 
   def create_sections

@@ -4,22 +4,14 @@ class SettingScreen < PM::Screen
   title 'Setting Menu'
   ALERT_OK_BUTTON = 1
 
-  def table_data
-    {
-      sections: [{
-          title: "BookMark",
-          rows: [{
-              title: "Delete All BookMarks",
-              type: :submit,
-            }]
-        }],
-    }
-  end
-
   def on_load
+    NSNotificationCenter.defaultCenter.addObserver(
+      self, selector:'showOAuthLoginView:', name: KHTBLoginStartNotification, object: nil
+    )
+    set_hatena_button
     set_nav_button
-    self.view.backgroundColor = UIColor.whiteColor
     set_delete_button
+    self.view.backgroundColor = UIColor.whiteColor
   end
 
   def set_delete_button
@@ -39,6 +31,26 @@ class SettingScreen < PM::Screen
     @button.setTitleColor(UIColor.whiteColor, forState: UIControlStateNormal)
     @button.sizeToFit
     @button.addTarget(self, action: :alert,
+      forControlEvents: UIControlEventTouchUpInside)
+  end
+
+  def set_hatena_button
+    center_x = App.bounds.size.width / 2
+    @label  = add UILabel.new, {
+      center: CGPointMake(center_x - 125, 500),
+      style_id: 'setting-screen-delete-button-label'
+    }
+    @label.text = 'Hatena BookMark'
+    @label.sizeToFit
+    @button = add UIButton.buttonWithType(UIButtonTypeRoundedRect), {
+      center: CGPointMake(center_x - 125, 550),
+      background_color: UIColor.blueColor,
+      style_id: 'setting-screen-delete-button'
+    }
+    @button.setTitle('Login', forState: UIControlStateNormal)
+    @button.setTitleColor(UIColor.whiteColor, forState: UIControlStateNormal)
+    @button.sizeToFit
+    @button.addTarget(self, action: :on_login,
       forControlEvents: UIControlEventTouchUpInside)
   end
 
@@ -69,6 +81,22 @@ class SettingScreen < PM::Screen
     end
   end
 
+  def on_login
+    HTBHatenaBookmarkManager.sharedManager.logout
+    HTBHatenaBookmarkManager.sharedManager.authorizeWithSuccess(
+      lambda {
+        UIAlertView.new.tap do |a|
+          a.message = 'Login Succeed!'
+          a.addButtonWithTitle("OK")
+        end.show
+      },
+      failure: lambda {|error|
+        PM.logger.warn(error)
+        NSLog(error.localizedDescription)
+      }
+    )    
+  end
+
   def toggle_left_panel
     app_delegate.panels.centerPanel = app_delegate.viewer.navigation_controller
     app_delegate.panels.toggleLeftPanel(nil)
@@ -82,5 +110,14 @@ class SettingScreen < PM::Screen
     end
     button = UIBarButtonItem.alloc.initWithCustomView(custom_view)
     self.navigationItem.leftBarButtonItem = button
+  end
+
+  # objective-c method
+  def showOAuthLoginView(notification)
+    req = notification.object
+    navigationController = UINavigationController.alloc.initWithNavigationBarClass(HTBNavigationBar, toolbarClass:nil)
+    viewController = HTBLoginWebViewController.alloc.initWithAuthorizationRequest(req)
+    navigationController.viewControllers = [viewController]
+    self.presentViewController(navigationController, animated:true, completion:nil)
   end
 end

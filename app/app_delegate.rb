@@ -2,6 +2,7 @@ class AppDelegate < PM::Delegate
   attr_reader :book_mark, :viewer, :book_mark_button, :panels
 
   def on_load(app, options)
+    initialize_hatena_oauth
     PXEngine.currentApplicationStylesheet.monitorChanges = true
     NSLog("%@", PXEngine.currentApplicationStylesheet.filePath)
 
@@ -20,4 +21,12 @@ class AppDelegate < PM::Delegate
     self.window.rootViewController = @panels
     self.window.makeKeyAndVisible
   end
+
+  private
+  def initialize_hatena_oauth
+    HTBHatenaBookmarkManager.sharedManager.setConsumerKey(
+      "....", consumerSecret: "...."
+    )
+  end
+
 end

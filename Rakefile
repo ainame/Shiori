@@ -25,5 +25,6 @@ Motion::Project::App.setup do |app|
   app.pods do
     pod 'NanoStore'
     pod 'JASidePanels'
+    pod 'HatenaBookmarkSDK', :git => 'https://github.com/hatena/Hatena-Bookmark-iOS-SDK.git'
   end
 end

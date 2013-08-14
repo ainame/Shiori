@@ -39,7 +39,8 @@ class BookMarkScreen < PM::TableScreen
               cell_style: UITableViewCellStyleDefault,
               cell_identifier: "SettingMenu",
               cell_class: BookMark::CustomTableCell,
-              action: :open_setting_screen,
+              action: :open_screen_by_args,
+              arguments: SettingScreen,
             },{
               title: "Lisence",
               cell_style: UITableViewCellStyleDefault,
@@ -49,6 +50,16 @@ class BookMarkScreen < PM::TableScreen
               arguments: "https://github.com/stars",
             },
           ]
+        },{
+          title: "Hatena BookMark",
+          cells: [{
+              title: "bookmarks",
+              cell_style: UITableViewCellStyleDefault,
+              cell_identifier: "SettingMenu",
+              cell_class: BookMark::CustomTableCell,
+              action: :open_screen_by_args,
+              arguments: HatenaBookmarkScreen,
+            }],
         }]    
     end
   end

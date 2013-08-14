@@ -45,8 +45,8 @@ class BookMarkScreen < PM::TableScreen
     app_delegate.panels.toggleLeftPanel(nil)
   end
 
-  def open_setting_screen
-    app_delegate.panels.centerPanel = SettingScreen.new(nav_bar: true).navigation_controller
+  def open_screen_by_args(pm_class)
+    app_delegate.panels.centerPanel = pm_class.new(nav_bar: true).navigation_controller
     app_delegate.panels.toggleLeftPanel(nil)
   end
   

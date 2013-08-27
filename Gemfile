@@ -6,6 +6,7 @@ gem 'bubble-wrap'
 gem 'nano-store'
 gem 'motion-cocoapods'
 gem 'motion-pixate'
+gem 'motion-my_env'
 
 group :development do
   gem 'guard-motion'

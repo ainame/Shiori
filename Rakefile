@@ -21,6 +21,7 @@ Motion::Project::App.setup do |app|
   app.pixate.user = pixate_setting['user']
   app.pixate.key  = pixate_setting['key']
   app.pixate.framework = 'vendor/PXEngine.framework'
+  app.my_env.file = './app.yaml'
 
   app.pods do
     pod 'NanoStore'

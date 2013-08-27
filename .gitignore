@@ -2,4 +2,4 @@ build
 vendor
 .repl_history
 Guardfile
-pixate_license.yaml
+*.yaml

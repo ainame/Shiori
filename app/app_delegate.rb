@@ -25,7 +25,8 @@ class AppDelegate < PM::Delegate
   private
   def initialize_hatena_oauth
     HTBHatenaBookmarkManager.sharedManager.setConsumerKey(
-      "....", consumerSecret: "...."
+      MY_ENV['hatena_consumer_key'],
+      consumerSecret: MY_ENV['hatena_consumer_secret']
     )
   end
 

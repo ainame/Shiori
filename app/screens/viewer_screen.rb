@@ -20,17 +20,6 @@ class ViewerScreen < PM::WebScreen
     load_js_src
   end
 
-  def start_indicator
-    App.shared.networkActivityIndicatorVisible = true
-    @indicator = LoadingIndicatorScreen.new(self)
-    @indicator.start
-  end
-
-  def stop_indicator
-    App.shared.networkActivityIndicatorVisible = false
-    @indicator.stop if @indicator
-  end
-
   def load_started
     inject_js_src
   end

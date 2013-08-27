@@ -161,9 +161,14 @@ class ViewerScreen < PM::WebScreen
     format = "%s を読んでます！%s #github_shiori"
     url   = NSURL.URLWithString(current_url)
     text = format % [get_repository_name, current_url]
-    activityItems = [text]
-    activityView = UIActivityViewController.alloc.initWithActivityItems(activityItems, applicationActivities: [])
-    self.presentViewController(activityView, animated: true, completion:nil)
+    activityItems = [text, url]
+
+    if UIActivityViewController.class
+      activityView = UIActivityViewController.alloc.initWithActivityItems(
+        activityItems, applicationActivities: [HTBHatenaBookmarkActivity.new]
+      )
+      self.presentViewController(activityView, animated: true, completion:nil)
+    end
   end
 
   def get_user_link

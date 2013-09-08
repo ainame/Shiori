@@ -42,6 +42,13 @@ class BookMarkScreen < PM::TableScreen
               action: :open_screen_by_args,
               arguments: SettingScreen,
             },{
+              title: "Setting Form",
+              cell_style: UITableViewCellStyleDefault,
+              cell_identifier: "SettingMenu",
+              cell_class: BookMark::CustomTableCell,
+              action: :open_screen_by_args,
+              arguments: SettingFormScreen,
+            },{
               title: "Lisence",
               cell_style: UITableViewCellStyleDefault,
               cell_identifier: "SettingMenu",

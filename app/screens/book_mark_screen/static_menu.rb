@@ -35,14 +35,7 @@ class BookMarkScreen < PM::TableScreen
       [{
           title: "Setting Menu",
           cells: [{
-              title: "Setting",
-              cell_style: UITableViewCellStyleDefault,
-              cell_identifier: "SettingMenu",
-              cell_class: BookMark::CustomTableCell,
-              action: :open_screen_by_args,
-              arguments: SettingScreen,
-            },{
-              title: "Setting Form",
+              title: "Settings",
               cell_style: UITableViewCellStyleDefault,
               cell_identifier: "SettingMenu",
               cell_class: BookMark::CustomTableCell,
@@ -57,16 +50,6 @@ class BookMarkScreen < PM::TableScreen
               arguments: "https://github.com/stars",
             },
           ]
-        },{
-          title: "Hatena BookMark",
-          cells: [{
-              title: "bookmarks",
-              cell_style: UITableViewCellStyleDefault,
-              cell_identifier: "SettingMenu",
-              cell_class: BookMark::CustomTableCell,
-              action: :open_screen_by_args,
-              arguments: HatenaBookmarkScreen,
-            }],
         }]    
     end
   end

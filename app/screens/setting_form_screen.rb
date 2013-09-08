@@ -20,27 +20,30 @@ class SettingFormScreen < PM::GroupedTableScreen
     end
     alert.show
   end
-
+  
   def table_data
     menu = [{
         title: 'Payment',
         cells: [{
-            title: '作者にラーメン二郎小ラーメンを奢る',
+            title: '作者にラーメン二郎小ラーメンをおごる',
             action: :alert,
             arguments: {
-              message: '作者にラーメン二郎',
+              message: '作者にラーメン二郎二郎小ラーメンをおごりますか？',
+              tag: 1,
             }
           },{
             title: '作者にラーメン二郎小ラーメン豚Wを奢る',
             action: :alert,
             arguments: {
-              message: '作者にラーメン二郎',
+              message: '作者にラーメン二郎二郎小ラーメン豚Wをおごりますか？',
+              tag: 1,
             }
           },{
             title: '作者にラーメン二郎大ラーメン豚Wを奢る',
             action: :alert,
             arguments: {
-              message: '作者にラーメン二郎',
+              message: '作者にラーメン二郎二郎大ラーメン豚Wをおごりますか？',
+              tag: 1,
             }
           }
         ],
@@ -51,6 +54,7 @@ class SettingFormScreen < PM::GroupedTableScreen
             action: :alert,
             arguments: {
               message: 'Sign in this app with Hatena account',
+              tag: 2,
             }
           }
         ],
@@ -72,7 +76,7 @@ class SettingFormScreen < PM::GroupedTableScreen
             action: :alert,
             arguments: {
               message: 'Can I delete your all bookmarks?',
-              tag: 1,
+              tag: 3,
             }
           }
         ],

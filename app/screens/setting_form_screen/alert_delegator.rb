@@ -2,7 +2,9 @@ class SettingFormScreen < PM::GroupedTableScreen
   class AlertDelegator
 
     TAG_MAP = {
-      1 => DeleteAllBookMark,
+      1 => Payment,
+      2 => InitializeHatenaBookMark,
+      3 => DeleteAllBookMark,
     }
     ALERT_OK_BUTTON = 1
 

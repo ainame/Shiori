@@ -17,6 +17,7 @@ Motion::Project::App.setup do |app|
   app.name = 'shiori'
   app.device_family  = [:iphone, :ipad]
   app.frameworks = ['StoreKit']
+
   app.my_env.file = './app.yaml'
   app.pods do
     pod 'NanoStore'

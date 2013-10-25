@@ -2,6 +2,8 @@ class SettingFormScreen < PM::GroupedTableScreen
   class AlertDelegator
     class Payment
       def self.execute
+        PM.logger.info('Payment Delegator executed!!')
+        PM.logger.info('canMakePayments?: ' + SKPaymentQueue.canMakePayments)
         if SKPaymentQueue.canMakePayments
           SKPaymentQueue.defaultQueue.addTransactionObserver(self)
           productIds = NSSet.setWithObject("1")

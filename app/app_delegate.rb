@@ -3,8 +3,6 @@ class AppDelegate < PM::Delegate
 
   def on_load(app, options)
     initialize_hatena_oauth
-    PXEngine.currentApplicationStylesheet.monitorChanges = true
-    NSLog("%@", PXEngine.currentApplicationStylesheet.filePath)
 
     db_path = App.documents_path + '/book_marks.db'
     NanoStore.shared_store = NanoStore.store :file, db_path

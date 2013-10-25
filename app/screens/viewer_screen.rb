@@ -27,7 +27,6 @@ class ViewerScreen < PM::WebScreen
   def load_finished
     inject_js_src
     set_star_button
-    stop_indicator
     self.title = get_repository_name
     reset_star_button
     set_user_link_url_to_master
@@ -52,7 +51,7 @@ class ViewerScreen < PM::WebScreen
     method, message = request.URL.host.match(/(.*?)(\{.*\})/).captures
     params = BW::JSON.parse(message)
     dispatch_rpc(method, params)
-    #stop_indicator
+
     return false
   end
 

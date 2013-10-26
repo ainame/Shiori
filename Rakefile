@@ -15,10 +15,9 @@ ENV['output'] = 'test_unit'
 Motion::Project::App.setup do |app|
   # Use `rake config' to see complete project settings.
   app.name = 'shiori'
-  app.device_family  = :ipad
+  app.device_family  = [:iphone, :ipad]
 
   app.my_env.file = './app.yaml'
-
   app.pods do
     pod 'NanoStore'
     pod 'JASidePanels'

@@ -29,3 +29,12 @@ class AppDelegate < PM::Delegate
   end
 
 end
+
+# for ios7
+if UIDevice.currentDevice.ios7?
+  class JASidePanelController < UIViewController
+    def prefersStatusBarHidden
+      true
+    end
+  end
+end

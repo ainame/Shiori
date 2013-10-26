@@ -5,6 +5,15 @@ class ViewerScreen < PM::WebScreen
 
   title 'Github viewer'
 
+  # for io7 http://qiita.com/kouchi67/items/cfd39c8c0b97baeb8f48
+  def view_did_load
+    if UIDevice.currentDevice.ios7?
+      self.edgesForExtendedLayout = UIRectEdgeNone
+      self.extendedLayoutIncludesOpaqueBars = false
+      self.automaticallyAdjustsScrollViewInsets = false
+    end
+  end
+
   def content
     to_load_url
   end

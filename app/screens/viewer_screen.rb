@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 class ViewerScreen < PM::WebScreen
+  include TogglePanelButton
+
   BRIDGE_URL_SCHEME = 'shiori-webview'
   STARS_URL = 'https://github.com/stars'
 
@@ -22,10 +24,10 @@ class ViewerScreen < PM::WebScreen
     url = App::Persistence['last_url'] ? App::Persistence['last_url'] : STARS_URL
     NSURL.URLWithString(url)
   end
-
+  
   def on_load
     set_tool_bar
-    set_bookmark_button
+    set_toggle_panel_button
     load_js_src
   end
 
@@ -97,20 +99,6 @@ class ViewerScreen < PM::WebScreen
     self.view.addSubview(@tool_bar)
     self.navigationController.toolbarHidden = false
     self.setToolbarItems(button_list, animated: true)
-  end
-
-  def toggle_left_panel
-    app_delegate.panels.toggleLeftPanel(nil)
-  end
-
-  def set_bookmark_button
-    custom_view = UIButton.buttonWithType(UIButtonTypeCustom).tap do |b|
-      b.setImage(UIImage.imageNamed("iconbeast/bookmark"), forState: UIControlStateNormal)
-      b.frame = CGRectMake(0,0,25,25)
-      b.addTarget(self, action: :toggle_left_panel, forControlEvents: UIControlEventTouchUpInside)
-    end
-    button = UIBarButtonItem.alloc.initWithCustomView(custom_view)
-    self.navigationItem.leftBarButtonItem = button
   end
 
   def set_star_button

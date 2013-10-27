@@ -10,8 +10,8 @@ class BookMark < NanoStore::Model
       {
         cell_style: UITableViewCellStyleSubtitle,
         cell_class: CustomTableCell,
-        title: @book_mark.file_name,
-        subtitle: "L#{@book_mark.line}: #{@book_mark.line_of_code}",
+        title: @book_mark.line_of_code,
+        subtitle: "L#{@book_mark.line}: #{@book_mark.file_name}",
         cell_identifier: CELL_IDENTIFIER,
         editing_style: :delete,
         action: :select_book_mark,

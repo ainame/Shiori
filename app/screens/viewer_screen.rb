@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 class ViewerScreen < PM::WebScreen
   include TogglePanelButton
-  include WebViewOperator
+  include WebViewOperateHelper
   include WebBridgeHelper
 
   STARS_URL = 'https://github.com/stars'
@@ -26,7 +26,7 @@ class ViewerScreen < PM::WebScreen
     url = App::Persistence['last_url'] ? App::Persistence['last_url'] : STARS_URL
     NSURL.URLWithString(url)
   end
-  
+
   def on_load
     set_tool_bar
     set_toggle_panel_button
@@ -51,7 +51,7 @@ class ViewerScreen < PM::WebScreen
     dispatcher = WebBridgeRequestDispatcher.new(request)
     unless dispatcher.web_bridge_request?
       App::Persistence['last_url'] = dispatcher.url.absoluteString
-      return true 
+      return true
     end
 
     dispatcher.execute

@@ -1,5 +1,5 @@
 class ViewerScreen < PM::WebScreen
-  module WebViewOperator
+  module WebViewOperateHelper
     def go_back
       if webview.canGoBack
         PM.logger.debug "go back"

@@ -49,7 +49,7 @@ class BookMarkScreen < PM::TableScreen
     app_delegate.panels.centerPanel = pm_class.new(nav_bar: true).navigation_controller
     app_delegate.panels.toggleLeftPanel(nil)
   end
-  
+
   def delete_row(index_paths, animated = true)
     cell = @table_data[index_paths.section][:cells][index_paths.row]
     delete_from_db(cell[:key])

@@ -20,7 +20,7 @@ class SettingFormScreen < PM::GroupedTableScreen
     end
     alert.show
   end
-  
+
   def table_data
     menu = [{
         title: 'Payment',
@@ -63,7 +63,7 @@ class SettingFormScreen < PM::GroupedTableScreen
 
     is_premium_user ? menu + delete_book_mark_menu : menu
   end
-  
+
   def is_premium_user
     true
   end
@@ -80,7 +80,7 @@ class SettingFormScreen < PM::GroupedTableScreen
             }
           }
         ],
-      }]  
+      }]
   end
 
   def tableView(tableView, titleForFooterInSection:section)

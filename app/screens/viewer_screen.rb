@@ -43,7 +43,7 @@ class ViewerScreen < PM::WebScreen
     set_star_button
     reset_star_button
     set_user_link_url_to_master
-    self.title = get_repository_name
+    set_title
     on_load_finished
   end
 
@@ -107,6 +107,10 @@ class ViewerScreen < PM::WebScreen
   def set_user_link_url_to_master
     user_link_url = "https://github.com#{get_user_link}"
     app_delegate.panels.leftPanel.user_link_url = user_link_url
+  end
+
+  def set_title
+    self.title = get_repository_name
   end
 
   def execute_ui_activity

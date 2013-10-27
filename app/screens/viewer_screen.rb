@@ -30,7 +30,6 @@ class ViewerScreen < PM::WebScreen
   def on_load
     set_tool_bar
     set_toggle_panel_button
-    load_js_src
   end
 
   def load_started

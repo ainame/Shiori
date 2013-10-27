@@ -5,6 +5,15 @@ class ViewerScreen < PM::WebScreen
       @js_src = NSString.stringWithContentsOfFile(path, encoding: NSUTF8StringEncoding, error: nil)
     end
 
+    def js_src
+      @js_src ||= load_js_src
+    end
+
+    def inject_js_src
+      evaluate(js_src)
+      evaluate("Shiori.attachClickLineOfCodeEvent();")
+    end
+
     def get_user_link
       evaluate("Shiori.getUserLinks();")
     end
@@ -14,11 +23,6 @@ class ViewerScreen < PM::WebScreen
       self.webview.keyboardDisplayRequiresUserAction = false
       evaluate("Shiori.executeFinder();")
       self.webview.keyboardDisplayRequiresUserAction = true
-    end
-
-    def inject_js_src
-      evaluate(@js_src)
-      evaluate("Shiori.attachClickLineOfCodeEvent();")
     end
 
     def get_repository_name

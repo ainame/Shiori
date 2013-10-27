@@ -64,13 +64,11 @@ class ViewerScreen < PM::WebScreen
       CGRectMake(0, sc.applicationFrame.size.height - 44,
         sc.applicationFrame.size.width, 44)
     )
-    left_arrow = UIImage.imageNamed("iconbeast/arrow-big-01")
-    right_arrow = UIImage.imageNamed("iconbeast/arrow-big-02")
     @go_back_button = UIBarButtonItem.alloc.initWithImage(
-      left_arrow, style: UIBarButtonItemStylePlain, target: self, action: :go_back
+      UIImage.imageNamed("back-25"), style: UIBarButtonItemStylePlain, target: self, action: :go_back
     )
     @go_forward_button = UIBarButtonItem.alloc.initWithImage(
-      right_arrow, style: UIBarButtonItemStylePlain, target: self, action: :go_forward
+      UIImage.imageNamed("forward-25"), style: UIBarButtonItemStylePlain, target: self, action: :go_forward
     )
 
     button_list = []

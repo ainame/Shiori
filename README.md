@@ -19,4 +19,4 @@ cite from [栞 - Wikipedia](http://ja.wikipedia.org/wiki/%E6%A0%9E)
 ![ss3](ss3.png)
 
 ## Thanks
-icons: http://www.iconbeast.com/free/
+icons: http://icons8.com/free-ios-7-icons-in-vector/

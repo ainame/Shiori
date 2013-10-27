@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 class ViewerScreen < PM::WebScreen
   include TogglePanelButton
+  include WebViewOperator
+  include WebBridgeHelper
 
-  BRIDGE_URL_SCHEME = 'shiori-webview'
   STARS_URL = 'https://github.com/stars'
 
   title 'Github viewer'
+  attr_reader :go_back_button, :go_forward_button
 
   # for io7 http://qiita.com/kouchi67/items/cfd39c8c0b97baeb8f48
   def view_did_load
@@ -33,45 +35,27 @@ class ViewerScreen < PM::WebScreen
 
   def load_started
     inject_js_src
+    on_load_started
   end
 
   def load_finished
     inject_js_src
     set_star_button
-    self.title = get_repository_name
     reset_star_button
     set_user_link_url_to_master
-    self.webview.keyboardDisplayRequiresUserAction = true
-  end
-
-  def id_anchor?(from, to)
-    from_url = NSURL.URLWithString(from)
-    to_url = NSURL.URLWithString(to)
-    from_url.scheme == to_url.scheme && from_url.path == to_url.path
+    self.title = get_repository_name
+    on_load_finished
   end
 
   def on_request(request, navigation_type)
-    url = request.URL
-    unless url.scheme == BRIDGE_URL_SCHEME
-      #start_indicator unless id_anchor?(App::Persistence['last_url'], url.absoluteString)
-      App::Persistence['last_url'] = url.absoluteString
+    dispatcher = WebBridgeRequestDispatcher.new(request)
+    unless dispatcher.web_bridge_request?
+      App::Persistence['last_url'] = dispatcher.url.absoluteString
       return true 
     end
 
-    PM.logger.log("DEBUG", "passed URL - #{url.scheme}://#{url.host} from WebView", :blue) if RUBYMOTION_ENV == "development"
-    method, message = request.URL.host.match(/(.*?)(\{.*\})/).captures
-    params = BW::JSON.parse(message)
-    dispatch_rpc(method, params)
-
+    dispatcher.execute
     return false
-  end
-
-  def dispatch_rpc(method, params)
-    case method
-    when 'clickLineOfCode'
-      BookMark.new(params).save
-      app_delegate.book_mark.update_table_data
-    end
   end
 
   def set_tool_bar
@@ -82,6 +66,12 @@ class ViewerScreen < PM::WebScreen
     )
     left_arrow = UIImage.imageNamed("iconbeast/arrow-big-01")
     right_arrow = UIImage.imageNamed("iconbeast/arrow-big-02")
+    @go_back_button = UIBarButtonItem.alloc.initWithImage(
+      left_arrow, style: UIBarButtonItemStylePlain, target: self, action: :go_back
+    )
+    @go_forward_button = UIBarButtonItem.alloc.initWithImage(
+      right_arrow, style: UIBarButtonItemStylePlain, target: self, action: :go_forward
+    )
 
     button_list = []
     button_list << UIBarButtonItem.alloc.initWithBarButtonSystemItem(
@@ -90,12 +80,10 @@ class ViewerScreen < PM::WebScreen
       UIBarButtonSystemItemAction, target: self, action: :execute_ui_activity)
     button_list << UIBarButtonItem.alloc.initWithBarButtonSystemItem(
       UIBarButtonSystemItemFlexibleSpace, target: self, action: nil)
-    button_list << UIBarButtonItem.alloc.initWithImage(left_arrow,
-      style: UIBarButtonItemStylePlain, target: self.webview, action: :goBack)
-    button_list << UIBarButtonItem.alloc.initWithImage(right_arrow,
-      style: UIBarButtonItemStylePlain, target: self.webview, action: :goForward)
+    button_list << @go_back_button
+    button_list << @go_forward_button
     button_list << UIBarButtonItem.alloc.initWithBarButtonSystemItem(
-      UIBarButtonSystemItemRefresh, target: self.webview, action: :reload)
+      UIBarButtonSystemItemRefresh, target: self, action: :reload)
     self.view.addSubview(@tool_bar)
     self.navigationController.toolbarHidden = false
     self.setToolbarItems(button_list, animated: true)
@@ -121,27 +109,6 @@ class ViewerScreen < PM::WebScreen
     app_delegate.panels.leftPanel.user_link_url = user_link_url
   end
 
-  def load_js_src
-    path = File.join(App.resources_path, 'application.js')
-    @js_src = NSString.stringWithContentsOfFile(path, encoding: NSUTF8StringEncoding, error: nil)
-  end
-
-  def inject_js_src
-    evaluate(@js_src)
-    evaluate("Shiori.attachClickLineOfCodeEvent();")
-  end
-
-  def get_repository_name
-    evaluate("Shiori.getRepositoryName();")
-  end
-
-  def execute_finder
-    # emurate "t"'s shortcut
-    self.webview.keyboardDisplayRequiresUserAction = false
-    evaluate("Shiori.executeFinder();")
-    self.webview.keyboardDisplayRequiresUserAction = true
-  end
-
   def execute_ui_activity
     format = "%s を読んでます！%s #github_shiori"
     url   = NSURL.URLWithString(current_url)
@@ -156,7 +123,4 @@ class ViewerScreen < PM::WebScreen
     end
   end
 
-  def get_user_link
-    evaluate("Shiori.getUserLinks();")
-  end
 end

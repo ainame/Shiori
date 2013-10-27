@@ -61,8 +61,7 @@ class ViewerScreen < PM::WebScreen
   def set_tool_bar
     sc = UIScreen.mainScreen
     @tool_bar =  UIToolbar.alloc.initWithFrame(
-      CGRectMake(0, sc.applicationFrame.size.height - 44,
-        sc.applicationFrame.size.width, 44)
+      CGRectMake(0, sc.applicationFrame.size.height - 44, sc.applicationFrame.size.width, 44)
     )
     @go_back_button = UIBarButtonItem.alloc.initWithImage(
       UIImage.imageNamed("back-25"), style: UIBarButtonItemStylePlain, target: self, action: :go_back
@@ -71,17 +70,18 @@ class ViewerScreen < PM::WebScreen
       UIImage.imageNamed("forward-25"), style: UIBarButtonItemStylePlain, target: self, action: :go_forward
     )
 
-    button_list = []
-    button_list << UIBarButtonItem.alloc.initWithBarButtonSystemItem(
-      UIBarButtonSystemItemSearch, target: self, action: :execute_finder)
-    button_list << UIBarButtonItem.alloc.initWithBarButtonSystemItem(
-      UIBarButtonSystemItemAction, target: self, action: :execute_ui_activity)
-    button_list << UIBarButtonItem.alloc.initWithBarButtonSystemItem(
-      UIBarButtonSystemItemFlexibleSpace, target: self, action: nil)
-    button_list << @go_back_button
-    button_list << @go_forward_button
-    button_list << UIBarButtonItem.alloc.initWithBarButtonSystemItem(
-      UIBarButtonSystemItemRefresh, target: self, action: :reload)
+    init_with_bar_button_system_item = lambda do |system_item, action|
+      UIBarButtonItem.alloc.initWithBarButtonSystemItem(system_item, target: self, action: action)
+    end
+
+    button_list = [
+      init_with_bar_button_system_item.call(UIBarButtonSystemItemSearch, :execute_finder),
+      init_with_bar_button_system_item.call(UIBarButtonSystemItemAction, :execute_ui_activity),
+      init_with_bar_button_system_item.call(UIBarButtonSystemItemFlexibleSpace, nil),
+      @go_back_button,
+      @go_forward_button,
+      init_with_bar_button_system_item.call(UIBarButtonSystemItemRefresh, :reload),
+    ]
     self.view.addSubview(@tool_bar)
     self.navigationController.toolbarHidden = false
     self.setToolbarItems(button_list, animated: true)

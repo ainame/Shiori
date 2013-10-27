@@ -1,10 +1,10 @@
 class ViewerScreen < PM::WebScreen
-  class StarButtonView 
+  class StarButtonView
     STAR_STATUSES = [:on, :off, :other]
 
     def initialize(viewer_screen)
       @viewer_screen = viewer_screen
-      set_current_star_state 
+      set_current_star_state
       create_button
     end
 
@@ -12,18 +12,18 @@ class ViewerScreen < PM::WebScreen
       return nil if @star_state == :other
 
       button = UIButton.buttonWithType(UIButtonTypeCustom).tap do |b|
-        image = UIImage.imageNamed( is_starred ?
-          "iconbeast/tick" : "iconbeast/star" )
+        image = UIImage.imageNamed("star-25")
         b.setImage(image, forState: UIControlStateNormal)
         b.frame = CGRectMake(0,0,25,25)
         b.addTarget(self, action: :click_star_button, forControlEvents: UIControlEventTouchUpInside)
       end
-
-      UIBarButtonItem.alloc.initWithCustomView(button)
+      button_item = UIBarButtonItem.alloc.initWithCustomView(button)
+      button_item.enabled = false if is_starred
+      button_item
     end
 
     def set_current_star_state
-      set_star_state(get_current_star_state)
+      set_star_state(@viewer_screen.get_current_star_state)
     end
 
     private
@@ -36,37 +36,15 @@ class ViewerScreen < PM::WebScreen
     end
 
     def set_star_state(star_state)
-      @star_state = STAR_STATUSES.include?(star_state.to_sym) ? 
+      @star_state = STAR_STATUSES.include?(star_state.to_sym) ?
         star_state.to_sym : :other
     end
 
     def click_star_button
       idx = is_starred ? 0 : 1
-      script = <<"JS"
-$($(".star-button")[#{idx}]).click();
-JS
-      @viewer_screen.evaluate(script)
+      @viewer_screen.click_star_button(idx)
       flip_star_state
-      @viewer_screen.navigationItem.
-        rightBarButtonItem = create_button
+      @viewer_screen.navigationItem.rightBarButtonItem = create_button
     end
-
-    def get_current_star_state
-      script = <<JS
-(function(){
-  if ($(".star-button")[0] === undefined){
-    return "other";
-  }
-  else if ($($(".star-button")[0]).parent().hasClass("on")) {
-    return "on";
-  }
-  else {
-    return "off";
-  }
-})();
-JS
-      @viewer_screen.evaluate(script)
-    end
-
   end
 end

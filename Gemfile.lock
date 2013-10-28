@@ -50,6 +50,7 @@ GEM
     motion-cocoapods (1.4.0)
       cocoapods (>= 0.26.2)
     motion-my_env (0.2)
+    motion-require (0.0.6)
     motion-stump (0.3.0)
     multi_json (1.8.2)
     nano-store (0.6.3)
@@ -81,5 +82,6 @@ DEPENDENCIES
   guard-motion
   motion-cocoapods
   motion-my_env
+  motion-require
   motion-stump
   nano-store

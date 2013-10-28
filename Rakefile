@@ -8,6 +8,7 @@ if ARGV.join(' ') =~ /spec/
 else
   Bundler.require
 end
+Motion::Require.all
 
 ENV['output'] = 'test_unit'
 #ENV['ARR_DEBUG'] = '1'
@@ -24,4 +25,9 @@ Motion::Project::App.setup do |app|
     pod 'JASidePanels'
     pod 'HatenaBookmarkSDK', :git => 'https://github.com/hatena/Hatena-Bookmark-iOS-SDK.git'
   end
+
+  app.files_dependencies({
+      'app/models/book_mark/custom_table_cell.rb' => 'app/models/custom_table_cell.rb',
+      'app/models/payment/custom_table_cell.rb' => 'app/models/custom_table_cell.rb'
+    })
 end

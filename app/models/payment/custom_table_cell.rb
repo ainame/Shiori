@@ -1,12 +1,5 @@
-class BookMark < NanoStore::Model
+module Payment
   class CustomTableCell < ::Shiori::CustomTableCell
-    def layoutSubviews
-      super
-      self.accessoryType = UITableViewCellAccessoryDisclosureIndicator
-      self.textLabel.numberOfLines = 0
-      self.textLabel.font = UIFont.systemFontOfSize(UIFont.systemFontSize)
-    end
-
     def text_label_options
       return NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading,
     end

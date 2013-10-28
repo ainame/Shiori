@@ -35,12 +35,7 @@ class BookMarkScreen < PM::TableScreen
     sections.map(&:render)
   end
 
-  def select_book_mark(book_mark)
-    app_delegate.viewer.open_url(book_mark.url)
-    app_delegate.panels.toggleLeftPanel(nil)
-  end
-
-  def select_default_menu(url)
+  def open_url_menu(url)
     app_delegate.viewer.open_url(url)
     app_delegate.panels.toggleLeftPanel(nil)
   end
@@ -59,5 +54,12 @@ class BookMarkScreen < PM::TableScreen
 
   def delete_from_db(key)
     BookMark.find_by_key(key).delete
+  end
+
+  OUTER_PADDING = 20
+  def tableView(tableView, heightForRowAtIndexPath:indexPath)
+    cell = tableView(tableView, cellForRowAtIndexPath:indexPath)
+    bounds = CGSizeMake(tableView.frame.size.width, tableView.frame.size.height)
+    return cell.own_height(bounds) + OUTER_PADDING
   end
 end

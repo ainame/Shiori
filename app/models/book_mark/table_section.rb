@@ -20,7 +20,7 @@ class BookMark < NanoStore::Model
     def render_cells
       @book_marks.map do |b|
         BookMark::TableCell.new(b).render
-      end      
+      end
     end
 
     class << self

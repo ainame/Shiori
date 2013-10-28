@@ -7,6 +7,7 @@ class SettingFormScreen < PM::GroupedTableScreen
   def on_load
     set_toggle_panel_button
     @alert_delegator = SettingFormScreen::AlertDelegator.new
+    update_table_data
   end
 
   def alert(params)
@@ -25,24 +26,27 @@ class SettingFormScreen < PM::GroupedTableScreen
     menu = [{
         title: 'Payment',
         cells: [{
-            title: '作者にラーメン二郎小ラーメンをおごる',
+            cell_class: Payment::CustomTableCell,
+            title: '作者に小ラーメンをおごる',
             action: :alert,
             arguments: {
-              message: '作者にラーメン二郎二郎小ラーメンをおごりますか？',
+              message: '作者に小ラーメンをおごりますか？',
               tag: 1,
             }
           },{
-            title: '作者にラーメン二郎小ラーメン豚Wを奢る',
+            cell_class: Payment::CustomTableCell,
+            title: '作者に小ラーメン豚Wをおごる',
             action: :alert,
             arguments: {
-              message: '作者にラーメン二郎二郎小ラーメン豚Wをおごりますか？',
+              message: '作者に小ラーメン豚Wをおごりますか？',
               tag: 1,
             }
           },{
-            title: '作者にラーメン二郎大ラーメン豚Wを奢る',
+            cell_class: Payment::CustomTableCell,
+            title: '作者に大ラーメン豚Wをおごる',
             action: :alert,
             arguments: {
-              message: '作者にラーメン二郎二郎大ラーメン豚Wをおごりますか？',
+              message: '作者に大ラーメン豚Wをおごりますか？',
               tag: 1,
             }
           }
@@ -50,6 +54,7 @@ class SettingFormScreen < PM::GroupedTableScreen
       },{
         title: 'Hatena Bookmark',
         cells: [{
+            cell_class: Shiori::CustomTableCell,
             title: 'Connect',
             action: :alert,
             arguments: {
@@ -61,7 +66,7 @@ class SettingFormScreen < PM::GroupedTableScreen
       },
     ]
 
-    is_premium_user ? menu + delete_book_mark_menu : menu
+    @table_data = is_premium_user ? menu + delete_book_mark_menu : menu
   end
 
   def is_premium_user
@@ -72,6 +77,7 @@ class SettingFormScreen < PM::GroupedTableScreen
     [{
         title: 'Bookmark',
         cells: [{
+            cell_class: Shiori::CustomTableCell,
             title: 'Delete all bookmarks',
             action: :alert,
             arguments: {
@@ -86,7 +92,14 @@ class SettingFormScreen < PM::GroupedTableScreen
   def tableView(tableView, titleForFooterInSection:section)
     case section
     when 0
-      'ラーメン二郎を作者に奢るとアプリ内ブックマーク削除機能が開放されます'
+      'ラーメンを作者に奢るとアプリ内ブックマーク削除機能が開放されます'
     end
+  end
+
+  OUTER_PADDING = 20
+  def tableView(tableView, heightForRowAtIndexPath:indexPath)
+    cell = tableView(tableView, cellForRowAtIndexPath:indexPath)
+    bounds = CGSizeMake(tableView.frame.size.width, tableView.frame.size.height)
+    return cell.own_height(bounds) + OUTER_PADDING
   end
 end
